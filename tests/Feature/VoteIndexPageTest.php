@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Http\Livewire\IdeaIndex;
+use App\Http\Livewire\IdeasIndex;
 use App\Models\Category;
 use App\Models\Idea;
 use App\Models\Status;
@@ -18,7 +19,7 @@ class VoteIndexPageTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
-    public function index_page_contains_idea_index_livewire_component()
+    public function ideas_index_livewire_component_contains_idea_index_livewire_component()
     {
         $user = User::factory()->create();
 
@@ -34,7 +35,7 @@ class VoteIndexPageTest extends TestCase
             'description' => 'Description for my first idea',
         ]);
 
-        $this->get(route('idea.index'))
+        Livewire::test(IdeasIndex::class)
             ->assertSeeLivewire('idea-index');
     }
 
@@ -66,7 +67,7 @@ class VoteIndexPageTest extends TestCase
             'user_id' => $userB->id,
         ]);
 
-        $this->get(route('idea.index'))
+        Livewire::test(IdeasIndex::class)
             ->assertViewHas('ideas', function ($ideas) {
                 return $ideas->first()->votes_count == 2;
             });
@@ -119,13 +120,12 @@ class VoteIndexPageTest extends TestCase
             'user_id' => $user->id,
         ]);
 
-        $response = $this->actingAs($user)->get(route('idea.index'));
-
-        $ideaWithVotes = $response['ideas']->items()[0];
+        $idea->votes_count = 1;
+        $idea->voted_by_user = 1;
 
         Livewire::actingAs($user)
             ->test(IdeaIndex::class, [
-                'idea' => $ideaWithVotes,
+                'idea' => $idea,
                 'votesCount' => 5,
             ])
             ->assertSet('hasVoted', true)
@@ -217,13 +217,12 @@ class VoteIndexPageTest extends TestCase
             'user_id' => $user->id,
         ]);
 
-        $response = $this->actingAs($user)->get(route('idea.index'));
-
-        $ideaWithVotes = $response['ideas']->items()[0];
+        $idea->votes_count = 1;
+        $idea->voted_by_user = 1;
 
         Livewire::actingAs($user)
             ->test(IdeaIndex::class, [
-                'idea' => $ideaWithVotes,
+                'idea' => $idea,
                 'votesCount' => 5,
             ])
             ->call('vote')
