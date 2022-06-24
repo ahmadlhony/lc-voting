@@ -12,9 +12,10 @@ class Idea extends Model
 {
     use HasFactory, Sluggable;
 
-    const PAGINATION_COUNT = 10;
+
 
     protected $guarded = [];
+    protected $perPage = 10;
 
     /**
      * Return the sluggable configuration array for this model.
@@ -48,6 +49,11 @@ class Idea extends Model
     public function votes()
     {
         return $this->belongsToMany(User::class, 'votes');
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
     }
 
     public function isVotedByUser(?User $user)

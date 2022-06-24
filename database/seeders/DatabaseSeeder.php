@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Category;
+use App\Models\Comment;
 use App\Models\Idea;
 use App\Models\Status;
 use App\Models\User;
@@ -32,13 +33,13 @@ class DatabaseSeeder extends Seeder
         Category::factory()->create(['name' => 'Category 3']);
         Category::factory()->create(['name' => 'Category 4']);
 
-        Status::factory()->create(['name'=> 'Open', 'classes' => 'bg-gray-200']);
-        Status::factory()->create(['name'=> 'Considering', 'classes' => 'bg-purple text-white']);
-        Status::factory()->create(['name'=> 'In Progress', 'classes' => 'bg-yellow text-white']);
-        Status::factory()->create(['name'=> 'Implemented', 'classes' => 'bg-green text-white']);
-        Status::factory()->create(['name'=> 'Closed', 'classes' => 'bg-red text-white']);
+        Status::factory()->create(['name' => 'Open']);
+        Status::factory()->create(['name' => 'Considering']);
+        Status::factory()->create(['name' => 'In Progress']);
+        Status::factory()->create(['name' => 'Implemented']);
+        Status::factory()->create(['name' => 'Closed']);
 
-        Idea::factory(100)->create();
+        Idea::factory(100)->existing()->create();
 
         // Generate unique votes. Ensure idea_id and user_id are unique for each row
         foreach (range(1, 20) as $user_id) {
@@ -50,6 +51,10 @@ class DatabaseSeeder extends Seeder
                     ]);
                 }
             }
+        }
+        // Generate comments for ideas
+        foreach (Idea::all() as $idea) {
+            Comment::factory(5)->existing()->create(['idea_id' => $idea->id]);
         }
     }
 }
